@@ -1,7 +1,7 @@
 package com.vault.fundsloaderapplication.controller;
 
 import com.vault.fundsloaderapplication.model.LoadRequest;
-import com.vault.fundsloaderapplication.repository.LoadRequestRepository;
+import com.vault.fundsloaderapplication.service.LoadRequestService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,19 +10,19 @@ import java.util.List;
 @RequestMapping("/api/load")
 public class LoadRequestController {
 
-    private final LoadRequestRepository loadRequestRepository;
+    private final LoadRequestService loadRequestService;
 
-    public LoadRequestController(LoadRequestRepository loadRequestRepository) {
-        this.loadRequestRepository = loadRequestRepository;
+    public LoadRequestController(LoadRequestService loadRequestService) {
+        this.loadRequestService = loadRequestService;
     }
 
     @GetMapping
     public List<LoadRequest> getLoadRequests(){
-        return loadRequestRepository.findAll();
+        return loadRequestService.getLoadRequests();
     }
 
     @PostMapping
-    public void postLoadRequests(@RequestBody LoadRequest loadRequest){
-        loadRequestRepository.save(loadRequest);
+    public void postLoadRequest(@RequestBody LoadRequest loadRequest){
+        loadRequestService.saveLoadRequests(loadRequest);
     }
 }
