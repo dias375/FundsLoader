@@ -13,8 +13,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "LOAD_REQUEST")
 public class LoadRequest {
 
+    //TODO Change to proper units
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
     private long id;
 
@@ -25,5 +25,5 @@ public class LoadRequest {
     private long load_amount;
 
     @Column(name = "TIME")
-    private long time; //TODO Change to UTC time
+    private long time;
 }
