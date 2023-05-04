@@ -18,6 +18,12 @@ public class LoadRequestService {
     }
 
     public void saveLoadRequests(LoadRequest loadRequest){
+
+        //TODO
+        //#1 Max amount load per day: $5000
+        //#2 Max amount load per week: $20000
+        //#3 Max load operations per day: 3
+
         loadRequestRepository.save(loadRequest);
     }
 
