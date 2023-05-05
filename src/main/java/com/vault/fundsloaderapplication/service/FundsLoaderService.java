@@ -2,13 +2,14 @@ package com.vault.fundsloaderapplication.service;
 
 import com.vault.fundsloaderapplication.model.*;
 import com.vault.fundsloaderapplication.repository.LoadRequestRepository;
+import com.vault.fundsloaderapplication.repository.LoadResponseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class LoadRequestService {
+public class FundsLoaderService {
 
     int DAILY_OPERATIONS_LIMIT = 3;
     int DAILY_AMOUNT_LIMIT = 5000;
@@ -17,7 +18,7 @@ public class LoadRequestService {
     @Autowired
     private LoadRequestRepository loadRequestRepository;
     @Autowired
-    private LoadResponseService loadResponseService;
+    private LoadResponseRepository loadResponseRepository;
 
     public List<LoadRequest> getLoadRequests(){
         return loadRequestRepository.findAll();
@@ -29,7 +30,8 @@ public class LoadRequestService {
 
     public void saveLoadRequest(LoadRequest loadRequest){
         loadRequestRepository.save(loadRequest);
-        loadResponseService.saveLoadResponse(loadRequest, isOperationAccepted(loadRequest));
+        LoadResponse loadResponse = new LoadResponse(loadRequest.getId(), loadRequest.getCustomer_id(), isOperationAccepted(loadRequest));
+        loadResponseRepository.save(loadResponse);
     }
 
     private boolean isOperationAccepted(LoadRequest loadRequest){
