@@ -16,6 +16,8 @@ public class LoadRequestService {
 
     @Autowired
     private LoadRequestRepository loadRequestRepository;
+    @Autowired
+    private LoadResponseService loadResponseService;
 
     public List<LoadRequest> getLoadRequests(){
         return loadRequestRepository.findAll();
@@ -25,19 +27,20 @@ public class LoadRequestService {
         return loadRequestRepository.findAllLoadRequestsFromCustomerId(customer.getCustomer_id());
     }
 
-    public void saveLoadRequests(LoadRequest loadRequest){
-        if(isOperationAboveLimits(loadRequest)){return;}
+    public void saveLoadRequest(LoadRequest loadRequest){
         loadRequestRepository.save(loadRequest);
+        loadResponseService.saveLoadResponse(loadRequest, isOperationAccepted(loadRequest));
     }
 
-    private boolean isOperationAboveLimits(LoadRequest loadRequest){
-        if(isAboveDailyOperationsLimit(loadRequest)){return true;}
-        if(isAboveDailyAmountLimit(loadRequest)){return true;}
-        if(isAboveWeeklyAmountLimit(loadRequest)){return true;}
-        return false;
+    private boolean isOperationAccepted(LoadRequest loadRequest){
+        if(isAboveDailyOperationsLimit(loadRequest)){return false;}
+        if(isAboveDailyAmountLimit(loadRequest)){return false;}
+        if(isAboveWeeklyAmountLimit(loadRequest)){return false;}
+        return true;
     }
 
     private boolean isAboveDailyOperationsLimit(LoadRequest loadRequest){
+        //will have to join LOAD_REQUEST from TODAY and check if they are accepted:TRUE in LOAD_RESPONSE
         return false;
     }
 

@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface LoadResponseRepository extends JpaRepository<LoadResponse, Long> {
 
-//
+
 }

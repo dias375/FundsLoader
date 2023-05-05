@@ -28,6 +28,6 @@ public class LoadRequestController {
 
     @PostMapping
     public void postLoadRequest(@RequestBody LoadRequest loadRequest){
-        loadRequestService.saveLoadRequests(loadRequest);
+        loadRequestService.saveLoadRequest(loadRequest);
     }
 }

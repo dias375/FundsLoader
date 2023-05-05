@@ -1,6 +1,6 @@
 package com.vault.fundsloaderapplication.service;
 
-import com.vault.fundsloaderapplication.model.LoadResponse;
+import com.vault.fundsloaderapplication.model.*;
 import com.vault.fundsloaderapplication.repository.LoadResponseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,13 +17,12 @@ public class LoadResponseService {
         return loadResponseRepository.findAll();
     }
 
-    public void saveLoadResponses(LoadResponse loadResponse){
+    public void saveLoadResponse(LoadResponse loadResponse){
         loadResponseRepository.save(loadResponse);
     }
-/*
-    public long checkAmmountByCustomer(long customerId){
-        List <LoadResponse> responses = loadResponseRepository.findByCustomerId(customerId);
-        return responses.get(0).getCustomer_id();
+
+    public void saveLoadResponse(LoadRequest loadRequest, boolean accepted){
+        LoadResponse loadResponse = new LoadResponse(loadRequest.getId(), loadRequest.getCustomer_id(), accepted);
+        loadResponseRepository.save(loadResponse);
     }
-*/
 }
