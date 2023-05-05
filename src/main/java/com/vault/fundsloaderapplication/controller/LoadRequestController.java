@@ -1,13 +1,13 @@
 package com.vault.fundsloaderapplication.controller;
 
-import com.vault.fundsloaderapplication.model.LoadRequest;
+import com.vault.fundsloaderapplication.model.*;
 import com.vault.fundsloaderapplication.service.LoadRequestService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/load")
+@RequestMapping("/api/load/request")
 public class LoadRequestController {
 
     private final LoadRequestService loadRequestService;
@@ -19,6 +19,11 @@ public class LoadRequestController {
     @GetMapping
     public List<LoadRequest> getLoadRequests(){
         return loadRequestService.getLoadRequests();
+    }
+
+    @GetMapping("/customer")
+    public List<LoadRequest> getAllLoadRequestsByCustomerId(@RequestBody Customer customer){
+        return loadRequestService.getAllLoadRequestsByCustomerId(customer);
     }
 
     @PostMapping

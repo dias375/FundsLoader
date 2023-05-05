@@ -20,5 +20,10 @@ public class LoadResponseService {
     public void saveLoadResponses(LoadResponse loadResponse){
         loadResponseRepository.save(loadResponse);
     }
-
+/*
+    public long checkAmmountByCustomer(long customerId){
+        List <LoadResponse> responses = loadResponseRepository.findByCustomerId(customerId);
+        return responses.get(0).getCustomer_id();
+    }
+*/
 }

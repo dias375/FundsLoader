@@ -1,6 +1,6 @@
 package com.vault.fundsloaderapplication.service;
 
-import com.vault.fundsloaderapplication.model.LoadRequest;
+import com.vault.fundsloaderapplication.model.*;
 import com.vault.fundsloaderapplication.repository.LoadRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +17,10 @@ public class LoadRequestService {
         return loadRequestRepository.findAll();
     }
 
+    public List<LoadRequest> getAllLoadRequestsByCustomerId(Customer customer){
+        return loadRequestRepository.findAllLoadRequestsFromCustomerId(customer.getCustomer_id());
+    }
+
     public void saveLoadRequests(LoadRequest loadRequest){
 
         //TODO
@@ -26,5 +30,7 @@ public class LoadRequestService {
 
         loadRequestRepository.save(loadRequest);
     }
+
+
 
 }

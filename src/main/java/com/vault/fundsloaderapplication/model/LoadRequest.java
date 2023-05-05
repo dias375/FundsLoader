@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 @Table(name = "LOAD_REQUEST")
 public class LoadRequest {
 
-    //TODO Change to proper units
     @Id
     @Column(name = "ID")
     private long id;
@@ -22,8 +21,9 @@ public class LoadRequest {
     private long customer_id;
 
     @Column(name = "LOAD_AMOUNT")
-    private long load_amount;
+    private String load_amount;
 
     @Column(name = "TIME")
-    private long time;
+    private String time;
+
 }
