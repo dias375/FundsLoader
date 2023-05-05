@@ -10,6 +10,10 @@ import java.util.List;
 @Service
 public class LoadRequestService {
 
+    int DAILY_OPERATIONS_LIMIT = 3;
+    int DAILY_AMOUNT_LIMIT = 5000;
+    int WEEKLY_AMOUNT_LIMIT = 20000;
+
     @Autowired
     private LoadRequestRepository loadRequestRepository;
 
@@ -22,13 +26,27 @@ public class LoadRequestService {
     }
 
     public void saveLoadRequests(LoadRequest loadRequest){
-
-        //TODO
-        //#1 Max amount load per day: $5000
-        //#2 Max amount load per week: $20000
-        //#3 Max load operations per day: 3
-
+        if(isOperationAboveLimits(loadRequest)){return;}
         loadRequestRepository.save(loadRequest);
+    }
+
+    private boolean isOperationAboveLimits(LoadRequest loadRequest){
+        if(isAboveDailyOperationsLimit(loadRequest)){return true;}
+        if(isAboveDailyAmountLimit(loadRequest)){return true;}
+        if(isAboveWeeklyAmountLimit(loadRequest)){return true;}
+        return false;
+    }
+
+    private boolean isAboveDailyOperationsLimit(LoadRequest loadRequest){
+        return false;
+    }
+
+    private boolean isAboveDailyAmountLimit(LoadRequest loadRequest){
+        return false;
+    }
+
+    private boolean isAboveWeeklyAmountLimit(LoadRequest loadRequest){
+        return false;
     }
 
 
