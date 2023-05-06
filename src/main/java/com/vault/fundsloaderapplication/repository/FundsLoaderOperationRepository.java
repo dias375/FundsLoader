@@ -25,6 +25,12 @@ public interface FundsLoaderOperationRepository extends JpaRepository<FundsLoade
         )
         List<FundsLoaderOperation> dailyOperationsFromCustomer(@Param("customerId") long customerId, @Param("date") LocalDate date);
 
+        @Query(
+                value = "select * from OPERATIONS where OPERATIONS.ACCEPTED and OPERATIONS.TIME between :start and :end = TRUE and OPERATIONS.CUSTOMER_ID = :customerId",
+                nativeQuery = true
+        )
+        List<FundsLoaderOperation> weeklyOperationsFromCustomer(@Param("customerId") long customerId, @Param("start") LocalDate startDate, @Param("end") LocalDate endDate);
+
 
         @Query(
                 value = "select * from OPERATIONS where OPERATIONS.ID = :id",

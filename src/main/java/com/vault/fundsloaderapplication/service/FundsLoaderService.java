@@ -6,8 +6,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
-import java.util.List;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
+import java.util.*;
+import java.util.stream.IntStream;
+
+import static java.util.stream.Collectors.toList;
 
 @Slf4j
 @Service
@@ -63,11 +68,8 @@ public class FundsLoaderService {
             return true;
         }
 
-        BigDecimal dailyOperationsFromCustomerAmount = loadRequest.getLoadAmount();
-        for(FundsLoaderOperation op : dailyOperationsFromCustomer){
-            dailyOperationsFromCustomerAmount = dailyOperationsFromCustomerAmount.add(op.getLoadAmount());
-        }
-        if(dailyOperationsFromCustomerAmount.compareTo(DAILY_AMOUNT_LIMIT) > 0) {
+        BigDecimal totalAmountWithFutureOperation = getTotalAmountWithFutureOperation(loadRequest, dailyOperationsFromCustomer);
+        if(totalAmountWithFutureOperation.compareTo(DAILY_AMOUNT_LIMIT) > 0) {
             log.info("DAILY_AMOUNT_LIMIT REACHED: id=" + loadRequest.getId());
             return true;
         }
@@ -75,8 +77,28 @@ public class FundsLoaderService {
     }
 
     private boolean isAboveWeeklyOperationsLimit(LoadRequest loadRequest){
-        //TODO implement weekly check
+        List<LocalDate> daysOfWeek = datesListOfCalendarWeek(loadRequest.getTime().toLocalDate());
+        List<FundsLoaderOperation> weeklyOperationsFromCustomer = fundsLoaderOperationRepository.weeklyOperationsFromCustomer(loadRequest.getCustomerId(), daysOfWeek.get(0), daysOfWeek.get(6));
+
+        BigDecimal totalAmountWithFutureOperation = getTotalAmountWithFutureOperation(loadRequest, weeklyOperationsFromCustomer);
+        if(totalAmountWithFutureOperation.compareTo(WEEKLY_AMOUNT_LIMIT) > 0) {
+            log.info("WEEKLY_AMOUNT_LIMIT REACHED: id=" + loadRequest.getId());
+            return true;
+        }
+
         return false;
     }
 
+    private BigDecimal getTotalAmountWithFutureOperation(LoadRequest newOperation, List<FundsLoaderOperation> oldOperations) {
+        BigDecimal totalOperationsFromCustomerAmount = newOperation.getLoadAmount();
+        for(FundsLoaderOperation op : oldOperations){
+            totalOperationsFromCustomerAmount = totalOperationsFromCustomerAmount.add(op.getLoadAmount());
+        }
+        return totalOperationsFromCustomerAmount;
+    }
+
+    public static List<LocalDate> datesListOfCalendarWeek(LocalDate date) {
+        LocalDate start = date.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        return IntStream.range(0, 7).mapToObj(start::plusDays).collect(toList());
+    }
 }
