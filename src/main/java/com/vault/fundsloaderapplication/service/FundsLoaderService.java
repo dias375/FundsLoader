@@ -44,8 +44,12 @@ public class FundsLoaderService {
     }
 
     private boolean isOperationAccepted(LoadRequest loadRequest){
-        if(isAboveDailyOperationsLimit(loadRequest)){return false;}
-        if(isAboveWeeklyOperationsLimit(loadRequest)){return false;}
+        if(isAboveDailyOperationsLimit(loadRequest)){
+            return false;
+        }
+        if(isAboveWeeklyOperationsLimit(loadRequest)){
+            return false;
+        }
         return true;
     }
 
@@ -88,11 +92,11 @@ public class FundsLoaderService {
     }
 
     private BigDecimal getTotalAmountWithFutureOperation(LoadRequest newOperation, List<FundsLoaderOperation> oldOperations) {
-        BigDecimal totalOperationsFromCustomerAmount = newOperation.getLoadAmount();
+        BigDecimal totalAmount = newOperation.getLoadAmount();
         for(FundsLoaderOperation op : oldOperations){
-            totalOperationsFromCustomerAmount = totalOperationsFromCustomerAmount.add(op.getLoadAmount());
+            totalAmount = totalAmount.add(op.getLoadAmount());
         }
-        return totalOperationsFromCustomerAmount;
+        return totalAmount;
     }
 
     private List<LocalDate> datesListOfCalendarWeek(LocalDate date) {
