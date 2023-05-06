@@ -30,7 +30,10 @@ public class FundsLoaderService {
 
     public LoadResponse saveLoadRequest(LoadRequest loadRequest){
 
-        //TODO check if operation id already exists, if yes, ignore
+        if(isOperationIdAlreadyUsed(loadRequest)){
+            System.out.println("DEBUG: OPERATION ID ALREADY USED");
+            return new LoadResponse();
+        }
 
         loadRequestRepository.save(loadRequest);
         LoadResponse loadResponse = new LoadResponse(loadRequest.getId(), loadRequest.getCustomer_id(), isOperationAccepted(loadRequest));
@@ -39,17 +42,18 @@ public class FundsLoaderService {
     }
 
     private boolean isOperationAccepted(LoadRequest loadRequest){
-        if(isAboveDailyOperationsLimit(loadRequest)){
-            return false;
-        }
-        if(isAboveWeeklyOperationsLimit(loadRequest)){
-            return false;
-        }
+        if(isAboveDailyOperationsLimit(loadRequest)){return false;}
+        if(isAboveWeeklyOperationsLimit(loadRequest)){return false;}
         return true;
     }
 
+    private boolean isOperationIdAlreadyUsed(LoadRequest loadRequest){
+        //TODO implement used ID check
+        return false;
+    }
+
     private boolean isAboveDailyOperationsLimit(LoadRequest loadRequest){
-        //will have to join LOAD_REQUEST from TODAY and check if they are accepted:TRUE in LOAD_RESPONSE
+        //TODO add day check
         List<LoadRequest> dailyOperationsFromCustomer = loadRequestRepository.dailyOperationsFromCustomer(loadRequest.getCustomer_id());
 
         if(dailyOperationsFromCustomer.size() >= DAILY_OPERATIONS_LIMIT){
@@ -71,6 +75,7 @@ public class FundsLoaderService {
     }
 
     private boolean isAboveWeeklyOperationsLimit(LoadRequest loadRequest){
+        //TODO implement weekly check
         return false;
     }
 
