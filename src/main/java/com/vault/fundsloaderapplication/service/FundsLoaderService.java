@@ -34,22 +34,38 @@ public class FundsLoaderService {
     }
 
     private boolean isOperationAccepted(LoadRequest loadRequest){
-        if(isAboveDailyOperationsLimit(loadRequest)){return false;}
-        if(isAboveDailyAmountLimit(loadRequest)){return false;}
-        if(isAboveWeeklyAmountLimit(loadRequest)){return false;}
+        if(isAboveDailyOperationsLimit(loadRequest)){
+            return false;
+        }
+        if(isAboveWeeklyOperationsLimit(loadRequest)){
+            return false;
+        }
         return true;
     }
 
     private boolean isAboveDailyOperationsLimit(LoadRequest loadRequest){
         //will have to join LOAD_REQUEST from TODAY and check if they are accepted:TRUE in LOAD_RESPONSE
+        List<LoadRequest> dailyOperationsFromCustomer = loadRequestRepository.dailyOperationsFromCustomer(loadRequest.getCustomer_id());
+
+        if(dailyOperationsFromCustomer.size() >= DAILY_OPERATIONS_LIMIT){
+            System.out.println("DEBUG: DAILY_OPERATIONS_LIMIT REACHED");
+            return true;
+        }
+
+        int dailyOperationsFromCustomerAmount = Integer.valueOf(loadRequest.getLoad_amount());
+        for(LoadRequest l : dailyOperationsFromCustomer){
+            dailyOperationsFromCustomerAmount += Integer.valueOf(l.getLoad_amount());
+        }
+
+        if(dailyOperationsFromCustomerAmount > DAILY_AMOUNT_LIMIT) {
+            System.out.println("DEBUG: DAILY_AMOUNT_LIMIT REACHED");
+            return true;
+        }
+
         return false;
     }
 
-    private boolean isAboveDailyAmountLimit(LoadRequest loadRequest){
-        return false;
-    }
-
-    private boolean isAboveWeeklyAmountLimit(LoadRequest loadRequest){
+    private boolean isAboveWeeklyOperationsLimit(LoadRequest loadRequest){
         return false;
     }
 
