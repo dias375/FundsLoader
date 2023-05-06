@@ -2,6 +2,7 @@ package com.vault.fundsloaderapplication.service;
 
 import com.vault.fundsloaderapplication.model.*;
 import com.vault.fundsloaderapplication.repository.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,6 +10,7 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.List;
 
+@Slf4j
 @Service
 public class FundsLoaderService {
 
@@ -22,14 +24,14 @@ public class FundsLoaderService {
 
     public List<FundsLoaderOperation> getFundsLoaderOperations(){return fundsLoaderOperationRepository.findAll();}
 
-    public List<FundsLoaderOperation> getAllLoadRequestsByCustomerId(long customerId){
+    public List<FundsLoaderOperation> getOperationsByCustomerId(long customerId){
         return fundsLoaderOperationRepository.findAllLoadRequestsFromCustomerId(customerId);
     }
 
     public LoadResponse fundsLoadRequest(LoadRequest loadRequest){
 
         if(isOperationIdAlreadyUsed(loadRequest)){
-            System.out.println("DEBUG: OPERATION ID DUPLICATED");
+            log.info("DEBUG: OPERATION ID DUPLICATED");
             return null;
         }
 
@@ -56,7 +58,7 @@ public class FundsLoaderService {
         List<FundsLoaderOperation> dailyOperationsFromCustomer = fundsLoaderOperationRepository.dailyOperationsFromCustomer(loadRequest.getCustomer_id());
 
         if(dailyOperationsFromCustomer.size() >= DAILY_OPERATIONS_LIMIT){
-            System.out.println("DEBUG: DAILY_OPERATIONS_LIMIT REACHED");
+            log.info("DEBUG: DAILY_OPERATIONS_LIMIT REACHED");
             return true;
         }
 
@@ -67,7 +69,7 @@ public class FundsLoaderService {
         }
 
         if(dailyOperationsFromCustomerAmount.compareTo(DAILY_AMOUNT_LIMIT) > 0) {
-            System.out.println("DEBUG: DAILY_AMOUNT_LIMIT REACHED");
+            log.info("DEBUG: DAILY_AMOUNT_LIMIT REACHED");
             return true;
         }
 

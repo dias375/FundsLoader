@@ -29,7 +29,7 @@ public class FundsLoaderController {
     }
 
     @GetMapping("/customer/{customerId}")
-    public List<FundsLoaderOperation> getAlloperationsByCustomerId(@PathVariable long customerId){
-        return fundsLoaderService.getAllLoadRequestsByCustomerId(customerId);
+    public List<FundsLoaderOperation> getOperationsByCustomerId(@PathVariable long customerId){
+        return fundsLoaderService.getOperationsByCustomerId(customerId);
     }
 }
