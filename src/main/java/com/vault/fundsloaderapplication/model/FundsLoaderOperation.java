@@ -16,8 +16,9 @@ import java.util.UUID;
 public class FundsLoaderOperation {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "UUID")
-    private UUID uuid = UUID.randomUUID();
+    private UUID uuid;
 
     @Column(name = "ID")
     private long id;
@@ -33,4 +34,12 @@ public class FundsLoaderOperation {
 
     @Column(name = "ACCEPTED")
     private boolean accepted;
+
+    public void setVariables(long id, long customer_id, String load_amount, String time, boolean accepted){
+        this.id = id;
+        this.customer_id = customer_id;
+        this.load_amount = load_amount;
+        this.time = time;
+        this.accepted = accepted;
+    }
 }

@@ -17,22 +17,17 @@ public class FundsLoaderController {
     }
     @PostMapping
     public LoadResponse postLoadRequest(@RequestBody LoadRequest loadRequest){
-        return fundsLoaderService.saveLoadRequest(loadRequest);
+        return fundsLoaderService.fundsLoadRequest(loadRequest);
     }
 
     //DEBUG -> TODO Turn into private
-    @GetMapping("/request")
-    public List<LoadRequest> getLoadRequests(){
-        return fundsLoaderService.getLoadRequests();
+    @GetMapping("/operations")
+    public List<FundsLoaderOperation> getLoadRequests(){
+        return fundsLoaderService.getFundsLoaderOperations();
     }
 
-    @GetMapping("/response")
-    public List<LoadResponse> getLoadResponses(){
-        return fundsLoaderService.getLoadResponses()
-                ;}
-
-    @GetMapping("/request/customer")
-    public List<LoadRequest> getAllLoadRequestsByCustomerId(@RequestBody Customer customer){
+    @GetMapping("/customer")
+    public List<FundsLoaderOperation> getAlloperationsByCustomerId(@RequestBody Customer customer){
         return fundsLoaderService.getAllLoadRequestsByCustomerId(customer);
     }
 }

@@ -16,28 +16,26 @@ public class FundsLoaderService {
 
 
     @Autowired
-    private LoadRequestRepository loadRequestRepository;
-    @Autowired
-    private LoadResponseRepository loadResponseRepository;
+    private FundsLoaderOperationRepository fundsLoaderOperationRepository;
 
-    public List<LoadRequest> getLoadRequests(){return loadRequestRepository.findAll();}
+    public List<FundsLoaderOperation> getFundsLoaderOperations(){return fundsLoaderOperationRepository.findAll();}
 
-    public List<LoadResponse> getLoadResponses(){return loadResponseRepository.findAll();}
-
-    public List<LoadRequest> getAllLoadRequestsByCustomerId(Customer customer){
-        return loadRequestRepository.findAllLoadRequestsFromCustomerId(customer.getCustomer_id());
+    public List<FundsLoaderOperation> getAllLoadRequestsByCustomerId(Customer customer){
+        return fundsLoaderOperationRepository.findAllLoadRequestsFromCustomerId(customer.getCustomer_id());
     }
 
-    public LoadResponse saveLoadRequest(LoadRequest loadRequest){
+    public LoadResponse fundsLoadRequest(LoadRequest loadRequest){
 
         if(isOperationIdAlreadyUsed(loadRequest)){
             System.out.println("DEBUG: OPERATION ID ALREADY USED");
             return new LoadResponse();
         }
 
-        loadRequestRepository.save(loadRequest);
-        LoadResponse loadResponse = new LoadResponse(loadRequest.getId(), loadRequest.getCustomer_id(), isOperationAccepted(loadRequest));
-        loadResponseRepository.save(loadResponse);
+        boolean operationStatus = isOperationAccepted(loadRequest);
+        FundsLoaderOperation operation = new FundsLoaderOperation();
+        operation.setVariables(loadRequest.getId(), loadRequest.getCustomer_id(), loadRequest.getLoad_amount(), loadRequest.getTime(), operationStatus);
+        fundsLoaderOperationRepository.save(operation);
+        LoadResponse loadResponse = new LoadResponse(loadRequest.getId(), loadRequest.getCustomer_id(), operationStatus);
         return loadResponse;
     }
 
@@ -48,13 +46,20 @@ public class FundsLoaderService {
     }
 
     private boolean isOperationIdAlreadyUsed(LoadRequest loadRequest){
-        //TODO implement used ID check
+        /*
+        List <FundsLoaderOperation> operations = fundsLoaderOperationRepository.operationsById(loadRequest.getId());
+        boolean isUsed = operations.isEmpty();
+        if(isUsed){
+            System.out.println("DEBUG: DUPLICATED ID");
+        }
+        return isUsed;
+         */
         return false;
     }
 
     private boolean isAboveDailyOperationsLimit(LoadRequest loadRequest){
         //TODO add day check
-        List<LoadRequest> dailyOperationsFromCustomer = loadRequestRepository.dailyOperationsFromCustomer(loadRequest.getCustomer_id());
+        List<FundsLoaderOperation> dailyOperationsFromCustomer = fundsLoaderOperationRepository.dailyOperationsFromCustomer(loadRequest.getCustomer_id());
 
         if(dailyOperationsFromCustomer.size() >= DAILY_OPERATIONS_LIMIT){
             System.out.println("DEBUG: DAILY_OPERATIONS_LIMIT REACHED");
@@ -62,8 +67,8 @@ public class FundsLoaderService {
         }
 
         int dailyOperationsFromCustomerAmount = Integer.valueOf(loadRequest.getLoad_amount());
-        for(LoadRequest l : dailyOperationsFromCustomer){
-            dailyOperationsFromCustomerAmount += Integer.valueOf(l.getLoad_amount());
+        for(FundsLoaderOperation op : dailyOperationsFromCustomer){
+            dailyOperationsFromCustomerAmount += Integer.valueOf(op.getLoad_amount());
         }
 
         if(dailyOperationsFromCustomerAmount > DAILY_AMOUNT_LIMIT) {
