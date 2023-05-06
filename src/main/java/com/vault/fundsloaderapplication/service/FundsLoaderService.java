@@ -28,12 +28,6 @@ public class FundsLoaderService {
         this.fundsLoaderOperationRepository = fundsLoaderOperationRepository;
     }
 
-    public List<FundsLoaderOperation> getFundsLoaderOperations(){return fundsLoaderOperationRepository.findAll();}
-
-    public List<FundsLoaderOperation> getOperationsByCustomerId(long customerId){
-        return fundsLoaderOperationRepository.findAllLoadRequestsFromCustomerId(customerId);
-    }
-
     public LoadResponse fundsLoadRequest(LoadRequest loadRequest){
 
         if(isOperationIdAlreadyUsed(loadRequest)){
@@ -53,6 +47,10 @@ public class FundsLoaderService {
         if(isAboveDailyOperationsLimit(loadRequest)){return false;}
         if(isAboveWeeklyOperationsLimit(loadRequest)){return false;}
         return true;
+    }
+
+    public boolean validateAmount(RawLoadRequest rawLoadRequest){
+        return rawLoadRequest.getLoadAmount().charAt(0) == '$';
     }
 
     private boolean isOperationIdAlreadyUsed(LoadRequest loadRequest){
@@ -97,7 +95,7 @@ public class FundsLoaderService {
         return totalOperationsFromCustomerAmount;
     }
 
-    public static List<LocalDate> datesListOfCalendarWeek(LocalDate date) {
+    private List<LocalDate> datesListOfCalendarWeek(LocalDate date) {
         LocalDate start = date.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
         return IntStream.range(0, 7).mapToObj(start::plusDays).collect(toList());
     }

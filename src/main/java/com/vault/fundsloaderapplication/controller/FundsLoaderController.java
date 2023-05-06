@@ -19,19 +19,11 @@ public class FundsLoaderController {
     }
     @PostMapping("/loadRequest")
     public ResponseEntity<LoadResponse> postLoadRequest(@RequestBody RawLoadRequest rawloadRequest) throws ParseException {
+        if(!fundsLoaderService.validateAmount(rawloadRequest)){
+            return ResponseEntity.badRequest().body(null);
+        }
         LoadRequest loadRequest = LoadRequest.from(rawloadRequest);
         LoadResponse loadResponse= fundsLoaderService.fundsLoadRequest(loadRequest);
         return ResponseEntity.ok(loadResponse);
-    }
-
-    //DEBUG -> TODO Turn into private
-    @GetMapping("/operations")
-    public List<FundsLoaderOperation> getLoadRequests(){
-        return fundsLoaderService.getFundsLoaderOperations();
-    }
-
-    @GetMapping("/customer/{customerId}")
-    public List<FundsLoaderOperation> getOperationsByCustomerId(@PathVariable long customerId){
-        return fundsLoaderService.getOperationsByCustomerId(customerId);
     }
 }
