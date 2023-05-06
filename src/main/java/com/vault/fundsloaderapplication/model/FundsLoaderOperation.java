@@ -5,7 +5,10 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.UUID;
 
 @Data
@@ -27,10 +30,11 @@ public class FundsLoaderOperation {
     private long customer_id;
 
     @Column(name = "LOAD_AMOUNT")
-    private String load_amount;
+    private BigDecimal load_amount;
 
     @Column(name = "TIME")
-    private String time;
+    @DateTimeFormat(pattern = "yyyy-MM-ddThh:mm:ssZ")
+    private Date time;
 
     @Column(name = "ACCEPTED")
     private boolean accepted;

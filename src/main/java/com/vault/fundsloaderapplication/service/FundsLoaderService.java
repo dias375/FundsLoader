@@ -5,14 +5,16 @@ import com.vault.fundsloaderapplication.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.List;
 
 @Service
 public class FundsLoaderService {
 
     int DAILY_OPERATIONS_LIMIT = 3;
-    int DAILY_AMOUNT_LIMIT = 5000;
-    int WEEKLY_AMOUNT_LIMIT = 20000;
+    BigDecimal DAILY_AMOUNT_LIMIT = BigDecimal.valueOf(5000);;
+    BigDecimal WEEKLY_AMOUNT_LIMIT = BigDecimal.valueOf(20000);
 
 
     @Autowired
@@ -58,12 +60,13 @@ public class FundsLoaderService {
             return true;
         }
 
-        int dailyOperationsFromCustomerAmount = Integer.valueOf(loadRequest.getLoad_amount());
+
+        BigDecimal dailyOperationsFromCustomerAmount = loadRequest.getLoad_amount();
         for(FundsLoaderOperation op : dailyOperationsFromCustomer){
-            dailyOperationsFromCustomerAmount += Integer.valueOf(op.getLoad_amount());
+            dailyOperationsFromCustomerAmount = dailyOperationsFromCustomerAmount.add(op.getLoad_amount());
         }
 
-        if(dailyOperationsFromCustomerAmount > DAILY_AMOUNT_LIMIT) {
+        if(dailyOperationsFromCustomerAmount.compareTo(DAILY_AMOUNT_LIMIT) > 0) {
             System.out.println("DEBUG: DAILY_AMOUNT_LIMIT REACHED");
             return true;
         }
@@ -74,6 +77,10 @@ public class FundsLoaderService {
     private boolean isAboveWeeklyOperationsLimit(LoadRequest loadRequest){
         //TODO implement weekly check
         return false;
+    }
+
+    public LoadRequest convertRawLoadRequest(RawLoadRequest rawLoadRequest) throws ParseException {
+        return new LoadRequest(rawLoadRequest.getId(), rawLoadRequest.getCustomer_id(), rawLoadRequest.getLoadAmountInBigDecimal(), rawLoadRequest.getTime());
     }
 
 

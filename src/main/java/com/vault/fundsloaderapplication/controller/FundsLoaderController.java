@@ -4,6 +4,7 @@ import com.vault.fundsloaderapplication.model.*;
 import com.vault.fundsloaderapplication.service.FundsLoaderService;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
 import java.util.List;
 
 @RestController
@@ -16,9 +17,11 @@ public class FundsLoaderController {
         this.fundsLoaderService = fundsLoaderService;
     }
     @PostMapping
-    public LoadResponse postLoadRequest(@RequestBody LoadRequest loadRequest){
+    public LoadResponse postLoadRequest(@RequestBody RawLoadRequest rawloadRequest) throws ParseException {
+        LoadRequest loadRequest = fundsLoaderService.convertRawLoadRequest(rawloadRequest);
         return fundsLoaderService.fundsLoadRequest(loadRequest);
     }
+    //TODO ignore '$' from load_amount
 
     //DEBUG -> TODO Turn into private
     @GetMapping("/operations")

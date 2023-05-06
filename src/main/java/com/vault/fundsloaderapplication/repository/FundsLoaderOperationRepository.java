@@ -22,6 +22,7 @@ public interface FundsLoaderOperationRepository extends JpaRepository<FundsLoade
                 nativeQuery = true
         )
         List<FundsLoaderOperation> dailyOperationsFromCustomer(@Param("customerId") long customerId);
+        //TODO add day to query
 
 
         @Query(
