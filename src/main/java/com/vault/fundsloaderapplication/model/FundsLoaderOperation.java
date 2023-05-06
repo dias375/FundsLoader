@@ -35,11 +35,11 @@ public class FundsLoaderOperation {
     @Column(name = "ACCEPTED")
     private boolean accepted;
 
-    public void setVariables(long id, long customer_id, String load_amount, String time, boolean accepted){
-        this.id = id;
-        this.customer_id = customer_id;
-        this.load_amount = load_amount;
-        this.time = time;
-        this.accepted = accepted;
+    public void setVariables(LoadRequest loadRequest, LoadResponse loadResponse){
+        this.id = loadRequest.getId();
+        this.customer_id = loadRequest.getCustomer_id();
+        this.load_amount = loadRequest.getLoad_amount();
+        this.time = loadRequest.getTime();
+        this.accepted = loadResponse.isAccepted();
     }
 }

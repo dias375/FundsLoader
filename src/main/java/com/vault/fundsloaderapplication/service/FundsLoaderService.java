@@ -27,15 +27,14 @@ public class FundsLoaderService {
     public LoadResponse fundsLoadRequest(LoadRequest loadRequest){
 
         if(isOperationIdAlreadyUsed(loadRequest)){
-            System.out.println("DEBUG: OPERATION ID ALREADY USED");
-            return new LoadResponse();
+            System.out.println("DEBUG: OPERATION ID DUPLICATED");
+            return null;
         }
 
-        boolean operationStatus = isOperationAccepted(loadRequest);
-        FundsLoaderOperation operation = new FundsLoaderOperation();
-        operation.setVariables(loadRequest.getId(), loadRequest.getCustomer_id(), loadRequest.getLoad_amount(), loadRequest.getTime(), operationStatus);
-        fundsLoaderOperationRepository.save(operation);
-        LoadResponse loadResponse = new LoadResponse(loadRequest.getId(), loadRequest.getCustomer_id(), operationStatus);
+        FundsLoaderOperation fundsLoaderOperation = new FundsLoaderOperation();
+        LoadResponse loadResponse = new LoadResponse(loadRequest.getId(), loadRequest.getCustomer_id(), isOperationAccepted(loadRequest));
+        fundsLoaderOperation.setVariables(loadRequest, loadResponse);
+        fundsLoaderOperationRepository.save(fundsLoaderOperation);
         return loadResponse;
     }
 
@@ -46,15 +45,8 @@ public class FundsLoaderService {
     }
 
     private boolean isOperationIdAlreadyUsed(LoadRequest loadRequest){
-        /*
         List <FundsLoaderOperation> operations = fundsLoaderOperationRepository.operationsById(loadRequest.getId());
-        boolean isUsed = operations.isEmpty();
-        if(isUsed){
-            System.out.println("DEBUG: DUPLICATED ID");
-        }
-        return isUsed;
-         */
-        return false;
+        return !operations.isEmpty();
     }
 
     private boolean isAboveDailyOperationsLimit(LoadRequest loadRequest){

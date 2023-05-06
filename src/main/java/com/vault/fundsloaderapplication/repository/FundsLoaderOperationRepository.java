@@ -23,11 +23,11 @@ public interface FundsLoaderOperationRepository extends JpaRepository<FundsLoade
         )
         List<FundsLoaderOperation> dailyOperationsFromCustomer(@Param("customerId") long customerId);
 
-        /*
+
         @Query(
-                value = "select * from OPERATIONS where OPERATIONS.ID = :newId",
+                value = "select * from OPERATIONS where OPERATIONS.ID = :id",
                 nativeQuery = true
         )
-        List<FundsLoaderOperation> operationsById(@Param("new_id") long newId);
-         */
+        List<FundsLoaderOperation> operationsById(@Param("id") long id);
+
 }
