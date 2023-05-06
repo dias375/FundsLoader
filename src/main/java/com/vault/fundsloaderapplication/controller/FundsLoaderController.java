@@ -21,7 +21,6 @@ public class FundsLoaderController {
         LoadRequest loadRequest = fundsLoaderService.convertRawLoadRequest(rawloadRequest);
         return fundsLoaderService.fundsLoadRequest(loadRequest);
     }
-    //TODO ignore '$' from load_amount
 
     //DEBUG -> TODO Turn into private
     @GetMapping("/operations")
@@ -29,8 +28,8 @@ public class FundsLoaderController {
         return fundsLoaderService.getFundsLoaderOperations();
     }
 
-    @GetMapping("/customer")
-    public List<FundsLoaderOperation> getAlloperationsByCustomerId(@RequestBody Customer customer){
-        return fundsLoaderService.getAllLoadRequestsByCustomerId(customer);
+    @GetMapping("/customer/{customerId}")
+    public List<FundsLoaderOperation> getAlloperationsByCustomerId(@PathVariable long customerId){
+        return fundsLoaderService.getAllLoadRequestsByCustomerId(customerId);
     }
 }

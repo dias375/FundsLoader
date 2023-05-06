@@ -22,8 +22,8 @@ public class FundsLoaderService {
 
     public List<FundsLoaderOperation> getFundsLoaderOperations(){return fundsLoaderOperationRepository.findAll();}
 
-    public List<FundsLoaderOperation> getAllLoadRequestsByCustomerId(Customer customer){
-        return fundsLoaderOperationRepository.findAllLoadRequestsFromCustomerId(customer.getCustomer_id());
+    public List<FundsLoaderOperation> getAllLoadRequestsByCustomerId(long customerId){
+        return fundsLoaderOperationRepository.findAllLoadRequestsFromCustomerId(customerId);
     }
 
     public LoadResponse fundsLoadRequest(LoadRequest loadRequest){
