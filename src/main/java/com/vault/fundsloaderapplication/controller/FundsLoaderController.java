@@ -2,6 +2,7 @@ package com.vault.fundsloaderapplication.controller;
 
 import com.vault.fundsloaderapplication.model.*;
 import com.vault.fundsloaderapplication.service.FundsLoaderService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
@@ -16,10 +17,11 @@ public class FundsLoaderController {
     public FundsLoaderController(FundsLoaderService fundsLoaderService) {
         this.fundsLoaderService = fundsLoaderService;
     }
-    @PostMapping
-    public LoadResponse postLoadRequest(@RequestBody RawLoadRequest rawloadRequest) throws ParseException {
-        LoadRequest loadRequest = fundsLoaderService.convertRawLoadRequest(rawloadRequest);
-        return fundsLoaderService.fundsLoadRequest(loadRequest);
+    @PostMapping("/loadRequest")
+    public ResponseEntity<LoadResponse> postLoadRequest(@RequestBody RawLoadRequest rawloadRequest) throws ParseException {
+        LoadRequest loadRequest = LoadRequest.from(rawloadRequest);
+        LoadResponse loadResponse= fundsLoaderService.fundsLoadRequest(loadRequest);
+        return ResponseEntity.ok(loadResponse);
     }
 
     //DEBUG -> TODO Turn into private

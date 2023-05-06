@@ -1,5 +1,6 @@
 package com.vault.fundsloaderapplication.model;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class LoadResponse {
     private long id;
-    private long customer_id;
+    @JsonAlias("customer_id")
+    private long customerId;
     private boolean accepted;
 }

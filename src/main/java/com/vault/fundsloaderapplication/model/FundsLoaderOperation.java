@@ -1,14 +1,14 @@
 package com.vault.fundsloaderapplication.model;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import jakarta.persistence.*;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
@@ -27,22 +27,23 @@ public class FundsLoaderOperation {
     private long id;
 
     @Column(name = "CUSTOMER_ID")
-    private long customer_id;
+    @JsonAlias("customer_id")
+    private long customerId;
 
     @Column(name = "LOAD_AMOUNT")
-    private BigDecimal load_amount;
+    @JsonAlias("load_amount")
+    private BigDecimal loadAmount;
 
     @Column(name = "TIME")
-    @DateTimeFormat(pattern = "yyyy-MM-ddThh:mm:ssZ")
-    private Date time;
+    private LocalDateTime time;
 
     @Column(name = "ACCEPTED")
     private boolean accepted;
 
-    public void setVariables(LoadRequest loadRequest, LoadResponse loadResponse){
+    public void setVariables(LoadRequest loadRequest, LoadResponse loadResponse) {
         this.id = loadRequest.getId();
-        this.customer_id = loadRequest.getCustomer_id();
-        this.load_amount = loadRequest.getLoad_amount();
+        this.customerId = loadRequest.getCustomerId();
+        this.loadAmount = loadRequest.getLoadAmount();
         this.time = loadRequest.getTime();
         this.accepted = loadResponse.isAccepted();
     }

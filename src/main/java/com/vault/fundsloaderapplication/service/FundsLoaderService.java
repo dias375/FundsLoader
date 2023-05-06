@@ -3,7 +3,6 @@ package com.vault.fundsloaderapplication.service;
 import com.vault.fundsloaderapplication.model.*;
 import com.vault.fundsloaderapplication.repository.*;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -15,12 +14,14 @@ import java.util.List;
 public class FundsLoaderService {
 
     int DAILY_OPERATIONS_LIMIT = 3;
-    BigDecimal DAILY_AMOUNT_LIMIT = BigDecimal.valueOf(5000);;
+    BigDecimal DAILY_AMOUNT_LIMIT = BigDecimal.valueOf(5000);
     BigDecimal WEEKLY_AMOUNT_LIMIT = BigDecimal.valueOf(20000);
 
+    private final FundsLoaderOperationRepository fundsLoaderOperationRepository;
 
-    @Autowired
-    private FundsLoaderOperationRepository fundsLoaderOperationRepository;
+    public FundsLoaderService(FundsLoaderOperationRepository fundsLoaderOperationRepository) {
+        this.fundsLoaderOperationRepository = fundsLoaderOperationRepository;
+    }
 
     public List<FundsLoaderOperation> getFundsLoaderOperations(){return fundsLoaderOperationRepository.findAll();}
 
@@ -31,14 +32,15 @@ public class FundsLoaderService {
     public LoadResponse fundsLoadRequest(LoadRequest loadRequest){
 
         if(isOperationIdAlreadyUsed(loadRequest)){
-            log.info("DEBUG: OPERATION ID DUPLICATED");
+            log.warn("OPERATION ID DUPLICATED: id=" + loadRequest.getId());
             return null;
         }
 
         FundsLoaderOperation fundsLoaderOperation = new FundsLoaderOperation();
-        LoadResponse loadResponse = new LoadResponse(loadRequest.getId(), loadRequest.getCustomer_id(), isOperationAccepted(loadRequest));
+        LoadResponse loadResponse = new LoadResponse(loadRequest.getId(), loadRequest.getCustomerId(), isOperationAccepted(loadRequest));
         fundsLoaderOperation.setVariables(loadRequest, loadResponse);
         fundsLoaderOperationRepository.save(fundsLoaderOperation);
+        log.info("LOAD OPERATION: " + loadResponse);
         return loadResponse;
     }
 
@@ -55,21 +57,21 @@ public class FundsLoaderService {
 
     private boolean isAboveDailyOperationsLimit(LoadRequest loadRequest){
         //TODO add day check
-        List<FundsLoaderOperation> dailyOperationsFromCustomer = fundsLoaderOperationRepository.dailyOperationsFromCustomer(loadRequest.getCustomer_id());
+        List<FundsLoaderOperation> dailyOperationsFromCustomer = fundsLoaderOperationRepository.dailyOperationsFromCustomer(loadRequest.getCustomerId());
 
         if(dailyOperationsFromCustomer.size() >= DAILY_OPERATIONS_LIMIT){
-            log.info("DEBUG: DAILY_OPERATIONS_LIMIT REACHED");
+            log.info("DAILY_OPERATIONS_LIMIT REACHED: id=" + loadRequest.getId());
             return true;
         }
 
 
-        BigDecimal dailyOperationsFromCustomerAmount = loadRequest.getLoad_amount();
+        BigDecimal dailyOperationsFromCustomerAmount = loadRequest.getLoadAmount();
         for(FundsLoaderOperation op : dailyOperationsFromCustomer){
-            dailyOperationsFromCustomerAmount = dailyOperationsFromCustomerAmount.add(op.getLoad_amount());
+            dailyOperationsFromCustomerAmount = dailyOperationsFromCustomerAmount.add(op.getLoadAmount());
         }
 
         if(dailyOperationsFromCustomerAmount.compareTo(DAILY_AMOUNT_LIMIT) > 0) {
-            log.info("DEBUG: DAILY_AMOUNT_LIMIT REACHED");
+            log.info("DAILY_AMOUNT_LIMIT REACHED: id=" + loadRequest.getId());
             return true;
         }
 
@@ -80,11 +82,5 @@ public class FundsLoaderService {
         //TODO implement weekly check
         return false;
     }
-
-    public LoadRequest convertRawLoadRequest(RawLoadRequest rawLoadRequest) throws ParseException {
-        return new LoadRequest(rawLoadRequest.getId(), rawLoadRequest.getCustomer_id(), rawLoadRequest.getLoadAmountInBigDecimal(), rawLoadRequest.getTime());
-    }
-
-
 
 }
