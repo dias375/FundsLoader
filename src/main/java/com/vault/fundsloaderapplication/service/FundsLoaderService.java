@@ -56,25 +56,21 @@ public class FundsLoaderService {
     }
 
     private boolean isAboveDailyOperationsLimit(LoadRequest loadRequest){
-        //TODO add day check
-        List<FundsLoaderOperation> dailyOperationsFromCustomer = fundsLoaderOperationRepository.dailyOperationsFromCustomer(loadRequest.getCustomerId());
+        List<FundsLoaderOperation> dailyOperationsFromCustomer = fundsLoaderOperationRepository.dailyOperationsFromCustomer(loadRequest.getCustomerId(), loadRequest.getTime().toLocalDate());
 
         if(dailyOperationsFromCustomer.size() >= DAILY_OPERATIONS_LIMIT){
             log.info("DAILY_OPERATIONS_LIMIT REACHED: id=" + loadRequest.getId());
             return true;
         }
 
-
         BigDecimal dailyOperationsFromCustomerAmount = loadRequest.getLoadAmount();
         for(FundsLoaderOperation op : dailyOperationsFromCustomer){
             dailyOperationsFromCustomerAmount = dailyOperationsFromCustomerAmount.add(op.getLoadAmount());
         }
-
         if(dailyOperationsFromCustomerAmount.compareTo(DAILY_AMOUNT_LIMIT) > 0) {
             log.info("DAILY_AMOUNT_LIMIT REACHED: id=" + loadRequest.getId());
             return true;
         }
-
         return false;
     }
 
