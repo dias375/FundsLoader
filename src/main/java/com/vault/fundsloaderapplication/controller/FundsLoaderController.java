@@ -16,8 +16,8 @@ public class FundsLoaderController {
         this.fundsLoaderService = fundsLoaderService;
     }
     @PostMapping
-    public void postLoadRequest(@RequestBody LoadRequest loadRequest){
-        fundsLoaderService.saveLoadRequest(loadRequest);
+    public LoadResponse postLoadRequest(@RequestBody LoadRequest loadRequest){
+        return fundsLoaderService.saveLoadRequest(loadRequest);
     }
 
     //DEBUG -> TODO Turn into private

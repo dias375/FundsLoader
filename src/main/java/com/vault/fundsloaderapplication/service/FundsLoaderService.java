@@ -14,6 +14,7 @@ public class FundsLoaderService {
     int DAILY_AMOUNT_LIMIT = 5000;
     int WEEKLY_AMOUNT_LIMIT = 20000;
 
+
     @Autowired
     private LoadRequestRepository loadRequestRepository;
     @Autowired
@@ -27,10 +28,14 @@ public class FundsLoaderService {
         return loadRequestRepository.findAllLoadRequestsFromCustomerId(customer.getCustomer_id());
     }
 
-    public void saveLoadRequest(LoadRequest loadRequest){
+    public LoadResponse saveLoadRequest(LoadRequest loadRequest){
+
+        //TODO check if operation id already exists, if yes, ignore
+
         loadRequestRepository.save(loadRequest);
         LoadResponse loadResponse = new LoadResponse(loadRequest.getId(), loadRequest.getCustomer_id(), isOperationAccepted(loadRequest));
         loadResponseRepository.save(loadResponse);
+        return loadResponse;
     }
 
     private boolean isOperationAccepted(LoadRequest loadRequest){
