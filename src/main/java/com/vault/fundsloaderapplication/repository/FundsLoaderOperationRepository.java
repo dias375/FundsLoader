@@ -14,12 +14,6 @@ package com.vault.fundsloaderapplication.repository;
 public interface FundsLoaderOperationRepository extends JpaRepository<FundsLoaderOperation, UUID> {
 
         @Query(
-                value = "select * from OPERATIONS where OPERATIONS.CUSTOMER_ID = :customerId",
-                nativeQuery = true
-        )
-        List<FundsLoaderOperation> findAllLoadRequestsFromCustomerId(@Param("customerId") long customerId);
-
-        @Query(
                 value = "select * from OPERATIONS where OPERATIONS.ACCEPTED = TRUE and OPERATIONS.CUSTOMER_ID = :customerId and OPERATIONS.TIME = :date",
                 nativeQuery = true
         )

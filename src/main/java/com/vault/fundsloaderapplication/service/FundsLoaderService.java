@@ -28,13 +28,7 @@ public class FundsLoaderService {
         this.fundsLoaderOperationRepository = fundsLoaderOperationRepository;
     }
 
-    public LoadResponse fundsLoadRequest(LoadRequest loadRequest){
-
-        if(isOperationIdAlreadyUsed(loadRequest)){
-            log.warn("OPERATION ID DUPLICATED: id=" + loadRequest.getId());
-            return null;
-        }
-
+    public LoadResponse loadFunds(LoadRequest loadRequest){
         FundsLoaderOperation fundsLoaderOperation = new FundsLoaderOperation();
         LoadResponse loadResponse = new LoadResponse(loadRequest.getId(), loadRequest.getCustomerId(), isOperationAccepted(loadRequest));
         fundsLoaderOperation.setVariables(loadRequest, loadResponse);
@@ -53,12 +47,19 @@ public class FundsLoaderService {
         return true;
     }
 
-    public boolean validateAmount(RawLoadRequest rawLoadRequest){
-        return rawLoadRequest.getLoadAmount().charAt(0) == '$';
+    public boolean validateJson(RawLoadRequest rawLoadRequest){
+        if(!(rawLoadRequest.getLoadAmount().charAt(0) == '$')){
+            return false;
+        }
+        if(isOperationIdAlreadyUsed(rawLoadRequest)){
+            log.warn("OPERATION ID DUPLICATED: id=" + rawLoadRequest.getId());
+            return false;
+        }
+        return true;
     }
 
-    private boolean isOperationIdAlreadyUsed(LoadRequest loadRequest){
-        List <FundsLoaderOperation> operations = fundsLoaderOperationRepository.operationsById(loadRequest.getId());
+    private boolean isOperationIdAlreadyUsed(RawLoadRequest rawLoadRequest){
+        List <FundsLoaderOperation> operations = fundsLoaderOperationRepository.operationsById(rawLoadRequest.getId());
         return !operations.isEmpty();
     }
 
