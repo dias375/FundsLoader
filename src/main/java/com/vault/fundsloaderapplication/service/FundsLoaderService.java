@@ -2,6 +2,7 @@ package com.vault.fundsloaderapplication.service;
 
 import com.vault.fundsloaderapplication.model.*;
 import com.vault.fundsloaderapplication.repository.*;
+import jakarta.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -29,10 +30,10 @@ public class FundsLoaderService {
     }
 
     public LoadResponse loadFunds(LoadRequest loadRequest){
-        FundsLoaderOperation fundsLoaderOperation = new FundsLoaderOperation();
+        Operation operation = new Operation();
         LoadResponse loadResponse = new LoadResponse(loadRequest.getId(), loadRequest.getCustomerId(), isOperationAccepted(loadRequest));
-        fundsLoaderOperation.setVariables(loadRequest, loadResponse);
-        fundsLoaderOperationRepository.save(fundsLoaderOperation);
+        operation.setVariables(loadRequest, loadResponse);
+        fundsLoaderOperationRepository.save(operation);
         log.info("LOAD OPERATION: " + loadResponse);
         return loadResponse;
     }
@@ -59,12 +60,12 @@ public class FundsLoaderService {
     }
 
     private boolean isOperationIdAlreadyUsed(RawLoadRequest rawLoadRequest){
-        List <FundsLoaderOperation> operations = fundsLoaderOperationRepository.operationsById(rawLoadRequest.getId());
+        List <Operation> operations = fundsLoaderOperationRepository.operationsById(rawLoadRequest.getId());
         return !operations.isEmpty();
     }
 
     private boolean isAboveDailyOperationsLimit(LoadRequest loadRequest){
-        List<FundsLoaderOperation> dailyOperationsFromCustomer = fundsLoaderOperationRepository.dailyOperationsFromCustomer(loadRequest.getCustomerId(), loadRequest.getTime().toLocalDate());
+        List<Operation> dailyOperationsFromCustomer = fundsLoaderOperationRepository.dailyOperationsFromCustomer(loadRequest.getCustomerId(), loadRequest.getTime().toLocalDate());
 
         if(dailyOperationsFromCustomer.size() >= DAILY_OPERATIONS_LIMIT){
             log.info("DAILY_OPERATIONS_LIMIT REACHED: id=" + loadRequest.getId());
@@ -81,7 +82,7 @@ public class FundsLoaderService {
 
     private boolean isAboveWeeklyOperationsLimit(LoadRequest loadRequest){
         List<LocalDate> daysOfWeek = datesListOfCalendarWeek(loadRequest.getTime().toLocalDate());
-        List<FundsLoaderOperation> weeklyOperationsFromCustomer = fundsLoaderOperationRepository.weeklyOperationsFromCustomer(loadRequest.getCustomerId(), daysOfWeek.get(0), daysOfWeek.get(6));
+        List<Operation> weeklyOperationsFromCustomer = fundsLoaderOperationRepository.weeklyOperationsFromCustomer(loadRequest.getCustomerId(), daysOfWeek.get(0), daysOfWeek.get(6));
 
         BigDecimal totalAmountWithFutureOperation = getTotalAmountWithFutureOperation(loadRequest, weeklyOperationsFromCustomer);
         if(totalAmountWithFutureOperation.compareTo(WEEKLY_AMOUNT_LIMIT) > 0) {
@@ -92,9 +93,9 @@ public class FundsLoaderService {
         return false;
     }
 
-    private BigDecimal getTotalAmountWithFutureOperation(LoadRequest newOperation, List<FundsLoaderOperation> oldOperations) {
-        BigDecimal totalAmount = newOperation.getLoadAmount();
-        for(FundsLoaderOperation op : oldOperations){
+    public BigDecimal getTotalAmountWithFutureOperation(LoadRequest loadRequest, List<Operation> oldOperations) {
+        BigDecimal totalAmount = loadRequest.getLoadAmount();
+        for(Operation op : oldOperations){
             totalAmount = totalAmount.add(op.getLoadAmount());
         }
         return totalAmount;

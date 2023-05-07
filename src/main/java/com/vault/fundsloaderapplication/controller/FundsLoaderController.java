@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.text.ParseException;
 
 @RestController
-@RequestMapping("/api/fundsloader")
+@RequestMapping("/v1")
 public class FundsLoaderController {
 
     private final FundsLoaderService fundsLoaderService;
@@ -16,7 +16,7 @@ public class FundsLoaderController {
     public FundsLoaderController(FundsLoaderService fundsLoaderService) {
         this.fundsLoaderService = fundsLoaderService;
     }
-    @PostMapping("/loadRequest")
+    @PostMapping("/load-funds")
     public ResponseEntity<LoadResponse> postLoadRequest(@RequestBody RawLoadRequest rawloadRequest) throws ParseException {
         if(!fundsLoaderService.validateJson(rawloadRequest)){
             return ResponseEntity.badRequest().body(null);

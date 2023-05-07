@@ -21,7 +21,6 @@ public class LoadRequest {
     private BigDecimal loadAmount;
     private LocalDateTime time;
 
-
     public static LoadRequest from(RawLoadRequest rawLoadRequest) {
         return LoadRequest.builder()
                 .id(rawLoadRequest.getId())

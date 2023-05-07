@@ -16,7 +16,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Entity
 @Table(name = "OPERATIONS")
-public class FundsLoaderOperation {
+public class Operation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
