@@ -16,9 +16,9 @@ single-line JSON payload, structured as follows:
 ```
 
 Each customer is subject to three limits:
-A maximum of $5,000 can be loaded per day
-A maximum of $20,000 can be loaded per week
-A maximum of 3 loads can be performed per day, regardless of amount
+* A maximum of $5,000 can be loaded per day
+* A maximum of $20,000 can be loaded per week
+* A maximum of 3 loads can be performed per day, regardless of amount
 
 As such, a user attempting to load $3,000 twice in one day would be declined on the second attempt, as would a user attempting
 to load $400 four times in a day. For each load attempt, you should return a JSON response indicating whether the fund load was
