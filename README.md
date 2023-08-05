@@ -1,9 +1,7 @@
 # FundsLoader 💸
 ## Financial Market Funds Loading API (Java / Spring Boot / SQL).
 
-
-Challenge
-In finance, it's common for accounts to have so-called "velocity limits". In this task, you'll create a Java Spring boot application
+In finance, "velocity limits" are necessary for security reasons. In this task, you'll create a Java Spring boot application
 that accepts or declines attempts to load funds into customers' accounts in real-time. Each attempt to load funds will come as a
 single-line JSON payload, structured as follows:
 ```
@@ -31,6 +29,6 @@ accepted based on the user's activity, with the structure:
 }
 ```
 
-You can assume that the input arrives in ascending chronological order and that if a load ID is observed more than once for a
-particular user, all but the first instance can be ignored (i.e. no response given). Each day is considered to end at midnight
-UTC, and weeks start on Monday (i.e. one second after 23:59:59 on Sunday).
+Input arrives in ascending chronological order and that if a load ID is observed more than once for a particular user, all but the
+first instance can be ignored (i.e. no response given). Each day is considered to end at midnight UTC, and weeks start on Monday
+(i.e. one second after 23:59:59 on Sunday).
